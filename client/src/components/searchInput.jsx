@@ -1,12 +1,32 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import '../App.css';
 import SearchBox from './searchBox';
+import axios from 'axios';
 
 export default function App() {
   const [model, setModel] = useState('curie');
   const [replies, setReplies] = useState([]);
+  const [allNews, setAllNews] = useState([]);
   const addReply = async () => {
     await setReplies([{ model, text: '' }, ...replies]);
+  };
+  useEffect(() => {
+    setAllNews(getNews);
+  }, []);
+
+  console.log(allNews);
+  const getNews = async () => {
+    try {
+      const API_key = '13aef48ed924432f8db875161defe7cf';
+      const apiUrl = `https://newsapi.org/v2/everything?q=Finland&from=2023-12-03&apiKey=${API_key}`;
+
+      const response = await axios.get(apiUrl);
+      const newsData = response.data;
+
+      return response.status(200).json(newsData);
+    } catch (error) {
+      console.error('Error fetching news:', error);
+    }
   };
 
   return (
